@@ -3,10 +3,17 @@ import 'screens/home_screen.dart';
 import 'screens/search_screen.dart';
 import 'screens/bookmark_screen.dart';
 import 'theme/app_theme.dart';
+import 'supabase_config.dart';
+import 'screens/auth/login_screen.dart';
+import 'screens/auth/auth_gate.dart';
 
 final themeNotifier = ValueNotifier<ThemeMode>(ThemeMode.dark);
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await SupabaseConfig.init();
+
   runApp(const ComicApp());
 }
 
@@ -24,7 +31,7 @@ class ComicApp extends StatelessWidget {
           theme: AppTheme.light(),
           darkTheme: AppTheme.dark(),
           themeMode: mode,
-          home: const MainNavigation(),
+          home: const AuthGate(),
         );
       },
     );
