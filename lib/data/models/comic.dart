@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class Comic {
   final String title;
   final String description;

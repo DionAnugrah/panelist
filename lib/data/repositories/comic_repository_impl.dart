@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:panelist/core/network/api_client_config.dart';
-import 'package:panelist/data/models/comic.dart';
 import 'package:panelist/data/models/comic_detail.dart';
 import 'package:panelist/data/models/comic_respone.dart';
 import 'package:panelist/data/repositories/comic_repository.dart';

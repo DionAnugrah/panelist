@@ -65,7 +65,6 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     final surfaceVariant = Theme.of(context).brightness == Brightness.dark
         ? const Color(0xFF2A2A2A)
         : const Color(0xFFEEEEEE);

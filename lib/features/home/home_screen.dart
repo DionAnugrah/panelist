@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:panelist/data/models/comic_respone.dart';
 import 'package:panelist/data/models/genres.dart';
@@ -7,7 +6,6 @@ import 'package:panelist/data/models/page_locator.dart';
 import 'package:panelist/data/repositories/comic_repository_impl.dart';
 import '../../data/models/comic.dart';
 import '../../core/widgets/comic_card.dart';
-import '../../main.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../auth/login_screen.dart';
 
