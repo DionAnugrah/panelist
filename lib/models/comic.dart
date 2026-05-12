@@ -16,6 +16,8 @@ class Comic {
     required this.chapter,
     required this.color,
   });
+
+  get description => null;
 }
 
 final List<Comic> dummyComics = [
