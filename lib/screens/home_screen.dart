@@ -4,8 +4,6 @@ import '../models/comic.dart';
 import '../widgets/comic_card.dart';
 import '../main.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'auth/login_screen.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -57,7 +55,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-
                       Text(
                         'PaneList',
                         style: TextStyle(
@@ -66,7 +63,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-
                       Text(
                         'Welcome, ${user?.email}',
                         style: TextStyle(
@@ -74,31 +70,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontSize: 13,
                         ),
                       ),
-
                     ],
                   ),
                   Row(
                     children: [
-                    // Logout
-                    IconButton(
-                      icon: Icon(
-                        Icons.logout,
-                        color: scheme.onSurface,
-                      ),
-                      onPressed: () async {
-                        await Supabase.instance.client.auth.signOut();
-
-                        if (!context.mounted) return;
-
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const LoginScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                    
                       // Theme toggle
                       ValueListenableBuilder<ThemeMode>(
                         valueListenable: themeNotifier,

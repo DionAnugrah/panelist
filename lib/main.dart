@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
 import 'screens/search_screen.dart';
 import 'screens/bookmark_screen.dart';
+import 'screens/profile.dart';
 import 'theme/app_theme.dart';
 import 'supabase_config.dart';
 import 'screens/auth/login_screen.dart';
@@ -11,9 +12,7 @@ final themeNotifier = ValueNotifier<ThemeMode>(ThemeMode.dark);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await SupabaseConfig.init();
-
   runApp(const ComicApp());
 }
 
@@ -52,6 +51,7 @@ class _MainNavigationState extends State<MainNavigation> {
     HomeScreen(),
     SearchScreen(),
     BookmarkScreen(),
+    ProfileScreen(),   // ← Profil ditambahkan
   ];
 
   @override
@@ -65,37 +65,41 @@ class _MainNavigationState extends State<MainNavigation> {
         data: NavigationBarThemeData(
           iconTheme: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
-              // Warna icon pas dipilih
-              return IconThemeData(color: scheme.onPrimary); 
+              return IconThemeData(color: scheme.onPrimary);
             }
-            // Warna icon pas tidak dipilih
-            return IconThemeData(color: scheme.onSurfaceVariant); 
+            return IconThemeData(color: scheme.onSurfaceVariant);
           }),
         ),
         child: NavigationBar(
-        backgroundColor: cardColor,
-        indicatorColor: scheme.primary,
-        selectedIndex: _currentIndex,
-        onDestinationSelected: (index) => setState(() => _currentIndex = index),
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.search_outlined),
-            selectedIcon: Icon(Icons.search),
-            label: 'Search',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.bookmark_outline),
-            selectedIcon: Icon(Icons.bookmark),
-            label: 'Bookmark',
-          ),
-        ],
+          backgroundColor: cardColor,
+          indicatorColor: scheme.primary,
+          selectedIndex: _currentIndex,
+          onDestinationSelected: (index) =>
+              setState(() => _currentIndex = index),
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(Icons.home_outlined),
+              selectedIcon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.search_outlined),
+              selectedIcon: Icon(Icons.search),
+              label: 'Search',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.bookmark_outline),
+              selectedIcon: Icon(Icons.bookmark),
+              label: 'Bookmark',
+            ),
+            NavigationDestination(           // ← Ditambahkan
+              icon: Icon(Icons.person_outline),
+              selectedIcon: Icon(Icons.person),
+              label: 'Profil',
+            ),
+          ],
+        ),
       ),
-    ),
     );
   }
 }
