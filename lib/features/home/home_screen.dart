@@ -472,8 +472,9 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
                           Text(
                             comic.latestChapter,
                             style:  TextStyle(
-                              color: scheme.onPrimary,
+                              color: const Color(0xFFE53935),
                               fontSize: 13,
+                              fontWeight: FontWeight.bold
                             ),
                           ),
                         ],
