@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:panelist/data/models/comic.dart';
-import 'package:panelist/features/reader/infokomik.dart';
+import 'package:panelist/features/comic/infokomik.dart';
 
 class ComicCard extends StatelessWidget {
   final Comic comic;
