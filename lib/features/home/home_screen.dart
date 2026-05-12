@@ -138,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         Text(
-                          'Welcome, ${user?.}',
+                          'Welcome, ${user?.email}',
                           style: TextStyle(
                             color: scheme.onSurfaceVariant,
                             fontSize: 13,
@@ -436,6 +436,23 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
                         color: Colors.white10,
                       ),
                     ),
+                    Positioned.fill(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withOpacity(
+                                0.8,
+                              ), // Semakin ke bawah semakin gelap
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                     Padding(
                       padding: const EdgeInsets.all(20),
                       child: Column(
@@ -446,6 +463,7 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
                             comic.title,
                             maxLines: 2,
                             style: const TextStyle(
+                              color: Colors.white,
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
@@ -453,7 +471,10 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
                           const SizedBox(height: 4),
                           Text(
                             comic.latestChapter,
-                            style: const TextStyle(fontSize: 13),
+                            style:  TextStyle(
+                              color: scheme.onPrimary,
+                              fontSize: 13,
+                            ),
                           ),
                         ],
                       ),
