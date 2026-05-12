@@ -4,13 +4,6 @@ import '../../data/models/comic.dart';
 
 class BookmarkService {
   final _supabase = Supabase.instance.client;
-  Future<int> countBookmarks() async {
-    final res = await _supabase
-        .from('bookmarks')
-        .select('id')
-        .eq('user_id', userId!);
-    return res.length;
-  }
 
   // Fungsi buat ngambil ID user yang lagi login saat ini
   String? get userId => _supabase.auth.currentUser?.id;

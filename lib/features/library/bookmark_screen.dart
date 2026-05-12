@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../data/models/comic.dart';
 import '../../core/widgets/comic_card.dart';
 import 'bookmark_service.dart';
-import '../../data/models/genres.dart';
+import '../comic/infokomik.dart';
 
 class BookmarkScreen extends StatefulWidget {
   const BookmarkScreen({super.key});
@@ -12,7 +12,6 @@ class BookmarkScreen extends StatefulWidget {
 }
 
 class _BookmarkScreenState extends State<BookmarkScreen> {
-  int _viewMode = 0;
   List<Comic> bookmarkedComics = [];
   bool _isLoading = true;
 
@@ -57,28 +56,6 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        Icons.grid_view,
-                        color: _viewMode == 0
-                            ? scheme.primary
-                            : scheme.onSurface.withValues(alpha: 0.4),
-                      ),
-                      onPressed: () => setState(() => _viewMode = 0),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.view_list,
-                        color: _viewMode == 1
-                            ? scheme.primary
-                            : scheme.onSurface.withValues(alpha: 0.4),
-                      ),
-                      onPressed: () => setState(() => _viewMode = 1),
-                    ),
-                  ],
-                ),
               ],
             ),
           ),
@@ -96,10 +73,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           Expanded(
             child: bookmarkedComics.isEmpty
                 ? _buildEmpty(scheme)
-                : _viewMode == 0
-                ? _buildGrid()
-                : _buildList(scheme),
-          ),
+                : _buildGrid(),
+          ), // Ganti ke _buildList() kalau mau tampilan list
         ],
       ),
     );
@@ -115,122 +90,24 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         childAspectRatio: 0.6,
       ),
       itemCount: bookmarkedComics.length,
-      itemBuilder: (context, index) =>
-          ComicCard(comic: bookmarkedComics[index]),
-    );
-  }
-
-  Widget _buildList(ColorScheme scheme) {
-    return ListView.separated(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      itemCount: bookmarkedComics.length,
-      separatorBuilder: (_, _) => const SizedBox(height: 10),
       itemBuilder: (context, index) {
-        final comic = bookmarkedComics[index];
-        final cardColor = Theme.of(context).cardColor;
-
-        return Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: cardColor,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Cover Image Section
-            Expanded(
-              child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(12),
-                ),
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    // Gambar Thumbnail dari URL
-                    Image.network(
-                      comic.thumbnail,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        color: scheme.surfaceContainerHighest,
-                        child: Icon(
-                          Icons.broken_image_outlined,
-                          color: scheme.primary.withValues(alpha: 0.5),
-                        ),
-                      ),
-                    ),
-                    // Overlay Gradient agar teks chapter lebih terbaca (opsional)
-                    Positioned.fill(
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.transparent,
-                              Colors.black.withValues(alpha: 0.3),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+        return GestureDetector(
+          onTap: () async {
+            // 1. Pindah halaman dari sini
+            final adaPerubahan = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    InfoKomikScreen(comic: bookmarkedComics[index]),
               ),
-            ),
-
-            // Info Section
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    comic.title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: scheme.onSurface,
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.whatshot_rounded,
-                        size: 12,
-                        color: scheme.primary,
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          comic.latestChapter,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: scheme.primary,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-      }
+            );
+              _loadBookmarks();
+          },
+          child: AbsorbPointer(
+            child: ComicCard(comic: bookmarkedComics[index]),
+          ),
+        );
+      },
     );
   }
 

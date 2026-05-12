@@ -5,6 +5,8 @@ import '../../main.dart';
 import '../auth/login_screen.dart';
 import '../comic/infokomik.dart';
 import '../../core/widgets/comic_card.dart';
+import 'histori_service.dart';
+import '../library/bookmark_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -192,38 +194,6 @@ class _ProfileScreenState extends State<ProfileScreen>
 
                 const SizedBox(height: 20),
 
-                // Stats Row
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      // _StatItem(
-                      //   label: 'Dibaca',
-                      //   value: '${dummyComics.length}',
-                      //   scheme: scheme,
-                      //   cardColor: cardColor,
-                      // ),
-                      // _Divider(),
-                      // _StatItem(
-                      //   label: 'Bookmark',
-                      //   value: '${bookmarkedComics.length}',
-                      //   scheme: scheme,
-                      //   cardColor: cardColor,
-                      // ),
-                      // _Divider(),
-                      // _StatItem(
-                      //   label: 'Rating',
-                      //   value: '4.8',
-                      //   scheme: scheme,
-                      //   cardColor: cardColor,
-                      // ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
                 // Tab Bar
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -262,18 +232,36 @@ class _ProfileScreenState extends State<ProfileScreen>
         body: TabBarView(
           controller: _tabController,
           children: [
-            // // Tab 1: Riwayat Baca (semua komik)
-            // _ComicTabContent(
-            //   comics: dummyComics,
-            //   emptyMessage: 'Belum ada riwayat baca',
-            //   emptyIcon: Icons.history,
-            // ),
-            // // Tab 2: Favorit (bookmarked)
-            // _ComicTabContent(
-            //   comics: bookmarkedComics,
-            //   emptyMessage: 'Belum ada favorit',
-            //   emptyIcon: Icons.favorite_outline,
-            // ),
+            // Tab 1: Riwayat Baca
+            FutureBuilder<List<dynamic>>(
+              future: HistoryService().fetchHistory(),
+              builder: (context, snapshot) {
+                final data = snapshot.data ?? [];
+                final comics = data
+                    .map((item) => Comic.fromJson(item))
+                    .toList();
+
+                return _ComicTabContent(
+                  comics: comics,
+                  emptyMessage: 'Belum ada riwayat baca',
+                  emptyIcon: Icons.history,
+                );
+              },
+            ),
+
+            // Tab 2: Favorit (Bookmark)
+            FutureBuilder<List<Comic>>(
+              future: BookmarkService().fetchBookmarks(),
+              builder: (context, snapshot) {
+                final comics = snapshot.data ?? [];
+
+                return _ComicTabContent(
+                  comics: comics,
+                  emptyMessage: 'Belum ada favorit',
+                  emptyIcon: Icons.favorite_outline,
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -349,57 +337,6 @@ class _ProfileScreenState extends State<ProfileScreen>
           ),
         );
       },
-    );
-  }
-}
-
-// ---------- Sub-widgets ----------
-
-class _StatItem extends StatelessWidget {
-  final String label;
-  final String value;
-  final ColorScheme scheme;
-  final Color cardColor;
-
-  const _StatItem({
-    required this.label,
-    required this.value,
-    required this.scheme,
-    required this.cardColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: TextStyle(
-            color: scheme.primary,
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          label,
-          style: TextStyle(
-            color: scheme.onSurface.withValues(alpha: 0.5),
-            fontSize: 12,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _Divider extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 30,
-      width: 1,
-      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
     );
   }
 }
@@ -486,12 +423,12 @@ class _ComicTabContent extends StatelessWidget {
       itemCount: comics.length,
       itemBuilder: (context, index) {
         return GestureDetector(
-          // onTap: () => Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (_) => InfoKomikScreen(comic: comics[index]),
-          //   ),
-          // ),
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => InfoKomikScreen(comic: comics[index]),
+            ),
+          ),
           child: ComicCard(comic: comics[index]),
         );
       },

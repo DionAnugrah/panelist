@@ -4,6 +4,7 @@ import 'package:panelist/data/models/comic_detail.dart';
 import 'package:panelist/data/repositories/comic_repository_impl.dart';
 import 'package:panelist/features/reader/data/chapter_detail.dart';
 import 'package:panelist/features/reader/presentation/baca_komik.dart';
+import '../library/bookmark_service.dart';
 
 class InfoKomikScreen extends StatefulWidget {
   final Comic comic;
@@ -29,9 +30,13 @@ class _InfoKomikScreenState extends State<InfoKomikScreen> {
     final repo = ComicRepositoryImpl();
     try {
       final data = await repo.fetchComicDetail(widget.comic.param);
+
+      final bookmarks = await BookmarkService().fetchBookmarks();
+      final available = bookmarks.any((b) => b.param == widget.comic.param);
       if (mounted) {
         setState(() {
           comicDetail = data;
+          _isBookmarked = available;
           _isLoading = false;
         });
       }
@@ -77,12 +82,20 @@ class _InfoKomikScreenState extends State<InfoKomikScreen> {
             backgroundColor: baseColor,
             leading: _buildAppBarAction(
               icon: Icons.arrow_back,
-              onTap: () => Navigator.pop(context),
+              onTap: () => Navigator.pop(context, true),
             ),
             actions: [
               _buildAppBarAction(
                 icon: _isBookmarked ? Icons.bookmark : Icons.bookmark_outline,
-                onTap: () {
+                onTap: () async {
+                  // Proses simpan/hapus ke database
+                  if (_isBookmarked) {
+                    await BookmarkService().removeBookmark(widget.comic.param);
+                  } else {
+                    await BookmarkService().addBookmark(widget.comic);
+                  }
+
+                  // Ubah tampilan ikon dan munculkan notif
                   setState(() => _isBookmarked = !_isBookmarked);
                   _showSnackBar(
                     '${comicDetail!.title} ${_isBookmarked ? 'disimpan' : 'dihapus'}',

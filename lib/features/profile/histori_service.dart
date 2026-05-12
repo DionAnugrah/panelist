@@ -42,7 +42,7 @@ class HistoryService {
         .from('history')
         .select()
         .eq('user_id', userId!)
-        .order('last_read_at', ascending: false); // Yang terbaru di atas
+        .order('last_read_at', ascending: false);
     return response;
   }
 }
