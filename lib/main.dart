@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:panelist/features/profile/profile.dart';
 import 'features/home/home_screen.dart';
 import 'features/search/search_screen.dart';
 import 'features/library/bookmark_screen.dart';
@@ -11,9 +12,7 @@ final themeNotifier = ValueNotifier<ThemeMode>(ThemeMode.dark);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await SupabaseConfig.init();
-
   runApp(const ComicApp());
 }
 
@@ -52,6 +51,7 @@ class _MainNavigationState extends State<MainNavigation> {
     HomeScreen(),
     SearchScreen(),
     // BookmarkScreen(),
+    ProfileScreen(),
   ];
 
   @override
@@ -65,10 +65,8 @@ class _MainNavigationState extends State<MainNavigation> {
         data: NavigationBarThemeData(
           iconTheme: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
-              // Warna icon pas dipilih
               return IconThemeData(color: scheme.onPrimary);
             }
-            // Warna icon pas tidak dipilih
             return IconThemeData(color: scheme.onSurfaceVariant);
           }),
         ),
@@ -93,6 +91,13 @@ class _MainNavigationState extends State<MainNavigation> {
               icon: Icon(Icons.bookmark_outline),
               selectedIcon: Icon(Icons.bookmark),
               label: 'Bookmark',
+            ),
+
+            NavigationDestination(
+              // ← Ditambahkan
+              icon: Icon(Icons.person_outline),
+              selectedIcon: Icon(Icons.person),
+              label: 'Profil',
             ),
           ],
         ),
