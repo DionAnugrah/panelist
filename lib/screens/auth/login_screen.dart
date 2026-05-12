@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
-import '../../main.dart';
-import '../home_screen.dart';
+import 'forgot_password_screen.dart';
 import 'register_screen.dart';
 import 'welcome_screen.dart';
 
@@ -14,7 +12,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final emailController = TextEditingController();
+
+  final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
   bool isLoading = false;
@@ -22,38 +21,46 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> login() async {
 
     // VALIDASI
-    if (emailController.text.isEmpty ||
+    if (usernameController.text.isEmpty ||
         passwordController.text.isEmpty) {
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Email dan password wajib diisi'),
+          content: Text('Username dan password wajib diisi'),
         ),
       );
+
       return;
     }
 
-    if (passwordController.text.length < 6) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Password minimal 6 karakter'),
-        ),
-      );
-      return;
-    }
     // VALIDASI PASSWORD
     if (passwordController.text.length < 6) {
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Password minimal 6 karakter'),
         ),
       );
+
       return;
     }
+
     try {
+
       setState(() => isLoading = true);
 
+      // CARI EMAIL BERDASARKAN USERNAME
+      final profile = await Supabase.instance.client
+          .from('profiles')
+          .select()
+          .eq('username', usernameController.text.trim())
+          .single();
+
+      final email = profile['email'];
+
+      // LOGIN PAKAI EMAIL
       await Supabase.instance.client.auth.signInWithPassword(
-        email: emailController.text.trim(),
+        email: email,
         password: passwordController.text.trim(),
       );
 
@@ -63,23 +70,43 @@ class _LoginScreenState extends State<LoginScreen> {
         context,
         MaterialPageRoute(
           builder: (_) => WelcomeScreen(
-            email: emailController.text.trim(),
+            username: usernameController.text.trim(),
           ),
         ),
       );
+
+    } on PostgrestException {
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Username tidak ditemukan'),
+        ),
+      );
+
     } on AuthException catch (e) {
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.message)),
       );
+
+    } catch (e) {
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+
     } finally {
+
       if (mounted) {
         setState(() => isLoading = false);
       }
+
     }
   }
 
-    @override
+  @override
   Widget build(BuildContext context) {
+
     final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -88,11 +115,12 @@ class _LoginScreenState extends State<LoginScreen> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(
               maxWidth: 450,
-              ),
+            ),
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24),
               child: Column(
                 children: [
+
                   Icon(
                     Icons.menu_book_rounded,
                     size: 100,
@@ -121,11 +149,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const SizedBox(height: 40),
 
+                  // USERNAME
                   TextField(
-                    controller: emailController,
+                    controller: usernameController,
                     decoration: InputDecoration(
-                      labelText: 'Email',
-                      prefixIcon: const Icon(Icons.email_outlined),
+                      labelText: 'Username',
+                      prefixIcon: const Icon(Icons.person_outline),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -134,6 +163,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const SizedBox(height: 20),
 
+                  // PASSWORD
                   TextField(
                     controller: passwordController,
                     obscureText: true,
@@ -147,20 +177,37 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
 
                   const SizedBox(height: 30),
-
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                const ForgotPasswordScreen(),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        'Forgot Password?',
+                      ),
+                    ),
+                  ),
                   SizedBox(
                     width: double.infinity,
                     height: 55,
                     child: ElevatedButton(
                       onPressed: isLoading ? null : login,
-                        child: isLoading
-                        ? const SizedBox(
-                            height: 24,
-                            width: 24,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 3,
-                            ),
-                          )
+
+                      child: isLoading
+                          ? const SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
+                              ),
+                            )
                           : const Text(
                               'Login',
                               style: TextStyle(fontSize: 18),
