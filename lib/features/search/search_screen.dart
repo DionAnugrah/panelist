@@ -47,7 +47,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
       if (mounted) {
         setState(() {
-          _searchResults = results;
+          _searchResults = results.comics;
           _isLoading = false;
         });
       }

@@ -2,7 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:panelist/core/network/api_client_config.dart';
 import 'package:panelist/data/models/comic.dart';
+import 'package:panelist/data/models/comic_detail.dart';
+import 'package:panelist/data/models/comic_respone.dart';
 import 'package:panelist/data/repositories/comic_repository.dart';
+import 'package:panelist/features/reader/data/chapter_detail.dart';
 
 class ComicRepositoryImpl implements ComicRepository {
   final Dio _dio;
@@ -11,13 +14,11 @@ class ComicRepositoryImpl implements ComicRepository {
     : _dio = apiClient?.dio ?? ApiClient().dio;
 
   @override
-  Future<List<Comic>> fetchComics() async {
+  Future<ComicRespone> fetchComics({int page = 1}) async {
     try {
-      final response = await _dio.get('/');
+      final response = await _dio.get('/', queryParameters: {'page': page});
 
-      final List<dynamic> data = response.data['data'];
-
-      return data.map((json) => Comic.fromJson(json)).toList();
+      return ComicRespone.fromJson(response.data);
     } on DioException catch (e) {
       debugPrint("Dio Error: ${e.message}");
       rethrow;
@@ -28,13 +29,14 @@ class ComicRepositoryImpl implements ComicRepository {
   }
 
   @override
-  Future<List<Comic>> fetchComicsByGenres(String genre) async {
+  Future<ComicRespone> fetchComicsByGenres(String genre, {int page = 1}) async {
     try {
-      final response = await _dio.get('/', queryParameters: {'genre': genre});
+      final response = await _dio.get(
+        '/',
+        queryParameters: {'genre': genre, 'page': page},
+      );
 
-      final List<dynamic> data = response.data['data'];
-
-      return data.map((json) => Comic.fromJson(json)).toList();
+      return ComicRespone.fromJson(response.data);
     } on DioException catch (e) {
       debugPrint("Dio Error: ${e.message}");
       rethrow;
@@ -42,13 +44,14 @@ class ComicRepositoryImpl implements ComicRepository {
   }
 
   @override
-  Future<List<Comic>> fetchComicsByType(String type) async {
+  Future<ComicRespone> fetchComicsByType(String type, {int page = 1}) async {
     try {
-      final response = await _dio.get('/', queryParameters: {'tipe': type});
+      final response = await _dio.get(
+        '/',
+        queryParameters: {'tipe': type, 'page': page},
+      );
 
-      final List<dynamic> data = response.data['data'];
-
-      return data.map((json) => Comic.fromJson(json)).toList();
+      return ComicRespone.fromJson(response.data);
     } on DioException catch (e) {
       debugPrint("Dio Error: ${e.message}");
       rethrow;
@@ -56,13 +59,17 @@ class ComicRepositoryImpl implements ComicRepository {
   }
 
   @override
-  Future<List<Comic>> fetchComicsByStatus(String status) async {
+  Future<ComicRespone> fetchComicsByStatus(
+    String status, {
+    int page = 1,
+  }) async {
     try {
-      final response = await _dio.get('/', queryParameters: {'status': status});
+      final response = await _dio.get(
+        '/',
+        queryParameters: {'status': status, 'page': page},
+      );
 
-      final List<dynamic> data = response.data['data'];
-
-      return data.map((json) => Comic.fromJson(json)).toList();
+      return ComicRespone.fromJson(response.data);
     } on DioException catch (e) {
       debugPrint("Dio Error: ${e.message}");
       rethrow;
@@ -70,17 +77,19 @@ class ComicRepositoryImpl implements ComicRepository {
   }
 
   @override
-  Future<List<Comic>> searchComics({
+  Future<ComicRespone> searchComics({
     String? query,
     String? genre,
     String? type,
     String? status,
+    int page = 1,
   }) async {
     try {
       final response = await _dio.get(
         '/',
         queryParameters: {
-          if (query != null && query.isNotEmpty) 'search': query,
+          if (page > 1) 'page': page,
+          if (query != null && query.isNotEmpty) 's': query,
           if (genre != null && genre != 'All Genres')
             'genre': genre.toLowerCase(),
           if (type != null && type != 'All Types') 'tipe': type.toLowerCase(),
@@ -89,10 +98,39 @@ class ComicRepositoryImpl implements ComicRepository {
         },
       );
 
-      final List<dynamic> data = response.data['data'];
-      return data.map((json) => Comic.fromJson(json)).toList();
+      return ComicRespone.fromJson(response.data);
     } on DioException catch (e) {
       debugPrint("Dio Error: ${e.message}");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<ComicDetail> fetchComicDetail(String title) async {
+    try {
+      final response = await _dio.get('/$title');
+
+      return ComicDetail.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      debugPrint("Dio Error: ${e.message}");
+      rethrow;
+    } catch (e) {
+      debugPrint("Error Fetching Comics: $e");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<ChapterDetail> fetchChapterDetail(String chapterParam) async {
+    try {
+      final response = await _dio.get('/chapter/$chapterParam');
+
+      return ChapterDetail.fromJson(response.data);
+    } on DioException catch (e) {
+      debugPrint("Dio Error: ${e.message}");
+      rethrow;
+    } catch (e) {
+      debugPrint("Error Fetching Chapter Detail: $e");
       rethrow;
     }
   }

@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'package:flutter/material.dart';
+import 'package:panelist/data/models/comic_respone.dart';
 import 'package:panelist/data/models/genres.dart';
+import 'package:panelist/data/models/page_locator.dart';
 import 'package:panelist/data/repositories/comic_repository_impl.dart';
 import '../../data/models/comic.dart';
 import '../../core/widgets/comic_card.dart';
@@ -21,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Comic> featuredComics =
       []; // Data khusus banner agar tidak hilang saat filter
   bool isLoading = true;
+  PageLocator pageLocator = PageLocator();
 
   // Mengambil list genre dari file model/genres.dart
   final List<String> _genres = genres.map((g) => g.name).toList()
@@ -39,8 +43,19 @@ class _HomeScreenState extends State<HomeScreen> {
       final data = await repo.fetchComics();
       if (mounted) {
         setState(() {
-          featuredComics = data.take(5).toList(); // Simpan 5 untuk banner
-          comics = data;
+          featuredComics = data.comics
+              .take(5)
+              .toList(); // Simpan 5 untuk banner
+          comics = data.comics;
+          pageLocator = PageLocator(
+            currentPage: data.nextPage != null
+                ? data.nextPage! - 1
+                : data.prevPage != null
+                ? data.prevPage! + 1
+                : 1,
+            nextPage: data.nextPage,
+            prevPage: data.prevPage,
+          );
           isLoading = false;
         });
       }
@@ -50,22 +65,31 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // Dipanggil setiap kali genre diklik (Load Data Baru dari API)
-  Future<void> _loadDataByGenre(String genre) async {
+  Future<void> _loadDataByGenre(String genre, {int page = 1}) async {
     setState(() => isLoading = true);
 
     final repo = ComicRepositoryImpl();
     try {
-      List<Comic> data;
+      ComicRespone data;
       if (genre == 'All') {
-        data = await repo.fetchComics();
+        data = await repo.fetchComics(page: page);
       } else {
         // Memanggil endpoint: /?genre=nama_genre
-        data = await repo.fetchComicsByGenres(genre.toLowerCase());
+        data = await repo.fetchComicsByGenres(genre.toLowerCase(), page: page);
       }
 
       if (mounted) {
         setState(() {
-          comics = data;
+          comics = data.comics;
+          pageLocator = PageLocator(
+            currentPage: data.nextPage != null
+                ? data.nextPage! - 1
+                : data.prevPage != null
+                ? data.prevPage! + 1
+                : 1,
+            nextPage: data.nextPage,
+            prevPage: data.prevPage,
+          );
           isLoading = false;
         });
       }
@@ -284,6 +308,71 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
             const SliverToBoxAdapter(child: SizedBox(height: 20)),
+
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    // Tombol Previous
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: pageLocator.prevPage == null
+                            ? null // Button mati jika tidak ada url prev
+                            : () => _loadDataByGenre(
+                                _selectedGenre,
+                                page: pageLocator.prevPage!,
+                              ),
+                        icon: const Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          size: 16,
+                        ),
+                        label: const Text("Prev"),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 24),
+                    Text(
+                      pageLocator.currentPage != null
+                          ? '${pageLocator.currentPage}'
+                          : '',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 24),
+                    // Tombol Next
+                    Expanded(
+                      child: FilledButton.icon(
+                        onPressed: pageLocator.nextPage == null
+                            ? null // Button mati jika tidak ada url next
+                            : () => _loadDataByGenre(
+                                _selectedGenre,
+                                page: pageLocator.nextPage!,
+                              ),
+                        icon: const Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          size: 16,
+                        ),
+                        label: const Text('Next'),
+                        style: FilledButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),

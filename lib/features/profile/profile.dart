@@ -3,7 +3,7 @@ import 'package:panelist/data/models/comic.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../main.dart';
 import '../auth/login_screen.dart';
-import '../reader/infokomik.dart';
+import '../comic/infokomik.dart';
 import '../../core/widgets/comic_card.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -486,12 +486,12 @@ class _ComicTabContent extends StatelessWidget {
       itemCount: comics.length,
       itemBuilder: (context, index) {
         return GestureDetector(
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => InfoKomikScreen(comic: comics[index]),
-            ),
-          ),
+          // onTap: () => Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (_) => InfoKomikScreen(comic: comics[index]),
+          //   ),
+          // ),
           child: ComicCard(comic: comics[index]),
         );
       },

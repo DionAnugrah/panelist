@@ -1,11 +1,10 @@
 import 'package:dio/dio.dart';
+import 'package:panelist/core/constants/env.dart';
 
 class ApiClient {
   final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: 'https://weeb-scraper.onrender.com/api/komiku',
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 10),
+      baseUrl: Env.apiUrl,
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
