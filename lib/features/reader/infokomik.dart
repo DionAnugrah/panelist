@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:panelist/data/models/comic.dart';
+import '../library/bookmark_service.dart';
+import '../profile/histori_service.dart';
 
 class InfoKomikScreen extends StatefulWidget {
   final Comic comic;
@@ -12,6 +14,23 @@ class InfoKomikScreen extends StatefulWidget {
 
 class _InfoKomikScreenState extends State<InfoKomikScreen> {
   bool _isBookmarked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _cekStatusBookmark();
+  }
+
+  Future<void> _cekStatusBookmark() async {
+    final bookmarks = await BookmarkService().fetchBookmarks();
+    // Cek apakah param komik ini ada di database
+    final sudahAda = bookmarks.any((b) => b.param == widget.comic.param);
+    if (mounted) {
+      setState(() {
+        _isBookmarked = sudahAda;
+      });
+    }
+  }
 
   // Daftar chapter dummy berdasarkan chapter terakhir dari model baru
   List<_ChapterItem> get _chapters {
@@ -85,10 +104,17 @@ class _InfoKomikScreenState extends State<InfoKomikScreen> {
             actions: [
               _buildAppBarAction(
                 icon: _isBookmarked ? Icons.bookmark : Icons.bookmark_outline,
-                onTap: () {
+                onTap: () async {
+                  // Proses simpan atau hapus ke database
+                  if (_isBookmarked) {
+                    await BookmarkService().removeBookmark(comic.param);
+                  } else {
+                    await BookmarkService().addBookmark(comic);
+                  }
+                  // Ubah tampilan ikon dan munculkan notif
                   setState(() => _isBookmarked = !_isBookmarked);
                   _showSnackBar(
-                    '${comic.title} ${_isBookmarked ? 'disimpan' : 'dihapus'}',
+                    '${comic.title} ${_isBookmarked ? 'disimpan ke bookmark' : 'dihapus dari bookmark'}',
                   );
                 },
               ),
@@ -255,7 +281,15 @@ class _InfoKomikScreenState extends State<InfoKomikScreen> {
                 comicColor: baseColor,
                 scheme: scheme,
                 cardColor: cardColor,
-                onTap: () => _showSnackBar('Membuka Chapter ${ch.number}'),
+                onTap: () async {
+                  // SIMPAN RIWAYAT DISINI
+                  await HistoryService().saveHistory(
+                    param: comic.param,
+                    title: comic.title,
+                    thumbnail: comic.thumbnail,
+                    lastChapter: 'Chapter ${ch.number}',
+                  );              
+                }
               );
             }, childCount: _chapters.length),
           ),

@@ -50,7 +50,7 @@ class _MainNavigationState extends State<MainNavigation> {
   final List<Widget> _screens = const [
     HomeScreen(),
     SearchScreen(),
-    // BookmarkScreen(),
+    BookmarkScreen(),
     ProfileScreen(),
   ];
 
@@ -92,7 +92,6 @@ class _MainNavigationState extends State<MainNavigation> {
               selectedIcon: Icon(Icons.bookmark),
               label: 'Bookmark',
             ),
-
             NavigationDestination(
               // ← Ditambahkan
               icon: Icon(Icons.person_outline),

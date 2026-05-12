@@ -27,4 +27,15 @@ class Comic {
       detailUrl: json['detail_url'] ?? '',
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'description': description,
+      'latest_chapter': latestChapter,
+      'thumbnail': thumbnail,
+      'param': param,
+      'detail_url': detailUrl,
+    };
+  }
 }
