@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'screens/home_screen.dart';
-import 'screens/search_screen.dart';
-import 'screens/bookmark_screen.dart';
-import 'theme/app_theme.dart';
-import 'supabase_config.dart';
-import 'screens/auth/login_screen.dart';
-import 'screens/auth/auth_gate.dart';
+import 'features/home/home_screen.dart';
+import 'features/search/search_screen.dart';
+import 'features/library/bookmark_screen.dart';
+import 'core/theme/app_theme.dart';
+import 'core/network/supabase_config.dart';
+import 'features/auth/login_screen.dart';
+import 'features/auth/auth_gate.dart';
 
 final themeNotifier = ValueNotifier<ThemeMode>(ThemeMode.dark);
 
@@ -51,7 +51,7 @@ class _MainNavigationState extends State<MainNavigation> {
   final List<Widget> _screens = const [
     HomeScreen(),
     SearchScreen(),
-    BookmarkScreen(),
+    // BookmarkScreen(),
   ];
 
   @override
@@ -66,36 +66,37 @@ class _MainNavigationState extends State<MainNavigation> {
           iconTheme: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
               // Warna icon pas dipilih
-              return IconThemeData(color: scheme.onPrimary); 
+              return IconThemeData(color: scheme.onPrimary);
             }
             // Warna icon pas tidak dipilih
-            return IconThemeData(color: scheme.onSurfaceVariant); 
+            return IconThemeData(color: scheme.onSurfaceVariant);
           }),
         ),
         child: NavigationBar(
-        backgroundColor: cardColor,
-        indicatorColor: scheme.primary,
-        selectedIndex: _currentIndex,
-        onDestinationSelected: (index) => setState(() => _currentIndex = index),
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.search_outlined),
-            selectedIcon: Icon(Icons.search),
-            label: 'Search',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.bookmark_outline),
-            selectedIcon: Icon(Icons.bookmark),
-            label: 'Bookmark',
-          ),
-        ],
+          backgroundColor: cardColor,
+          indicatorColor: scheme.primary,
+          selectedIndex: _currentIndex,
+          onDestinationSelected: (index) =>
+              setState(() => _currentIndex = index),
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(Icons.home_outlined),
+              selectedIcon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.search_outlined),
+              selectedIcon: Icon(Icons.search),
+              label: 'Search',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.bookmark_outline),
+              selectedIcon: Icon(Icons.bookmark),
+              label: 'Bookmark',
+            ),
+          ],
+        ),
       ),
-    ),
     );
   }
 }

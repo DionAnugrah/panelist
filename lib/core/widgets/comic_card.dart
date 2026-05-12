@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/comic.dart';
+import '../../data/models/comic.dart';
 
 class ComicCard extends StatelessWidget {
   final Comic comic;
@@ -12,7 +12,10 @@ class ComicCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: cardColor,
+        image: DecorationImage(
+          image: NetworkImage(comic.thumbnail),
+          fit: BoxFit.cover,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -24,17 +27,9 @@ class ComicCard extends StatelessWidget {
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(10),
                 ),
-                color: comic.color,
               ),
               child: Stack(
                 children: [
-                  Center(
-                    child: Icon(
-                      Icons.menu_book,
-                      size: 48,
-                      color: Colors.white.withValues(alpha: 0.3),
-                    ),
-                  ),
                   Positioned(
                     top: 6,
                     right: 6,
@@ -47,20 +42,20 @@ class ComicCard extends StatelessWidget {
                         color: Colors.black54,
                         borderRadius: BorderRadius.circular(4),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.star, size: 10, color: Colors.amber),
-                          const SizedBox(width: 2),
-                          Text(
-                            comic.rating,
-                            style: const TextStyle(
-                              fontSize: 10,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
+                      // child: Row(
+                      //   mainAxisSize: MainAxisSize.min,
+                      //   children: [
+                      //     const Icon(Icons.star, size: 10, color: Colors.amber),
+                      //     const SizedBox(width: 2),
+                      //     Text(
+                      //       comic.rating,
+                      //       style: const TextStyle(
+                      //         fontSize: 10,
+                      //         color: Colors.white,
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
                     ),
                   ),
                 ],
@@ -85,7 +80,7 @@ class ComicCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  comic.chapter,
+                  comic.latestChapter,
                   style: TextStyle(
                     color: Theme.of(
                       context,

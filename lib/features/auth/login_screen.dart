@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../main.dart';
-import '../home_screen.dart';
+import '../home/home_screen.dart';
 import 'register_screen.dart';
 import 'welcome_screen.dart';
 
@@ -20,32 +20,24 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isLoading = false;
 
   Future<void> login() async {
-
     // VALIDASI
-    if (emailController.text.isEmpty ||
-        passwordController.text.isEmpty) {
+    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Email dan password wajib diisi'),
-        ),
+        const SnackBar(content: Text('Email dan password wajib diisi')),
       );
       return;
     }
 
     if (passwordController.text.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Password minimal 6 karakter'),
-        ),
+        const SnackBar(content: Text('Password minimal 6 karakter')),
       );
       return;
     }
     // VALIDASI PASSWORD
     if (passwordController.text.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Password minimal 6 karakter'),
-        ),
+        const SnackBar(content: Text('Password minimal 6 karakter')),
       );
       return;
     }
@@ -62,15 +54,13 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => WelcomeScreen(
-            email: emailController.text.trim(),
-          ),
+          builder: (_) => WelcomeScreen(email: emailController.text.trim()),
         ),
       );
     } on AuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.message)));
     } finally {
       if (mounted) {
         setState(() => isLoading = false);
@@ -78,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-    @override
+  @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
@@ -86,9 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: 450,
-              ),
+            constraints: const BoxConstraints(maxWidth: 450),
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24),
               child: Column(
@@ -114,9 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   Text(
                     "Read your favorite manga",
-                    style: TextStyle(
-                      color: scheme.onSurfaceVariant,
-                    ),
+                    style: TextStyle(color: scheme.onSurfaceVariant),
                   ),
 
                   const SizedBox(height: 40),
@@ -153,18 +139,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 55,
                     child: ElevatedButton(
                       onPressed: isLoading ? null : login,
-                        child: isLoading
-                        ? const SizedBox(
-                            height: 24,
-                            width: 24,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 3,
-                            ),
-                          )
-                          : const Text(
-                              'Login',
-                              style: TextStyle(fontSize: 18),
-                            ),
+                      child: isLoading
+                          ? const SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(strokeWidth: 3),
+                            )
+                          : const Text('Login', style: TextStyle(fontSize: 18)),
                     ),
                   ),
 
@@ -179,9 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       );
                     },
-                    child: const Text(
-                      "Belum punya akun? Register",
-                    ),
+                    child: const Text("Belum punya akun? Register"),
                   ),
                 ],
               ),
