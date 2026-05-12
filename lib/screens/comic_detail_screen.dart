@@ -55,7 +55,6 @@ class _ComicDetailScreenState extends State<ComicDetailScreen> {
                       subtitle: Text(chapter.title),
                       trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                       onTap: () {
-                        // Pindah ke layar baca komik saat chapter diklik
                         Navigator.push(
                           context,
                           MaterialPageRoute(

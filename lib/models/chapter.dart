@@ -3,7 +3,7 @@ class Chapter {
   final String comicId;
   final double chapterNumber;
   final String title;
-  final List<String> imageUrls; // List URL gambar untuk halaman komik
+  final List<String> imageUrls; // List URL gambar untuk chapternya
 
   Chapter({
     required this.id,
@@ -13,14 +13,13 @@ class Chapter {
     required this.imageUrls,
   });
 
-  // Fungsi untuk mengubah data JSON dari Supabase menjadi object Dart
   factory Chapter.fromJson(Map<String, dynamic> json) {
     return Chapter(
       id: json['id'],
       comicId: json['comic_id'],
       chapterNumber: json['chapter_number']?.toDouble() ?? 0.0,
       title: json['title'] ?? '',
-      // Asumsi URL gambar disimpan dalam format array/list di database
+      // untuk URL gambar disimpan dalam format array/list di database supabase
       imageUrls: List<String>.from(json['image_urls'] ?? []),
     );
   }

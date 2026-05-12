@@ -11,10 +11,10 @@ class ReaderScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Ch. ${chapter.chapterNumber} - ${chapter.title}'),
-        backgroundColor: Colors.black, // Tema gelap lebih nyaman untuk membaca
+        backgroundColor: Colors.black, // Tema gelap
         foregroundColor: Colors.white,
       ),
-      backgroundColor: Colors.black, // Background layar baca
+      backgroundColor: Colors.black,
       body: chapter.imageUrls.isEmpty
           ? const Center(
               child: Text(
@@ -23,17 +23,15 @@ class ReaderScreen extends StatelessWidget {
               ),
             )
           : ListView.builder(
-              // Menghilangkan efek pantulan scroll di ujung (opsional)
               physics: const ClampingScrollPhysics(),
               itemCount: chapter.imageUrls.length,
               itemBuilder: (context, index) {
                 return Image.network(
                   chapter.imageUrls[index],
-                  fit:
-                      BoxFit.fitWidth, // Memastikan gambar memenuhi lebar layar
+                  fit: BoxFit.fitWidth,
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) return child;
-                    // Tampilan saat gambar sedang di-load
+
                     return const SizedBox(
                       height: 300,
                       child: Center(
