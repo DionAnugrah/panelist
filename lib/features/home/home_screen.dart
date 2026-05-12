@@ -138,26 +138,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         Text(
-                          'Welcome, ${user?.email}',
+                          'Welcome, ${user?.}',
                           style: TextStyle(
                             color: scheme.onSurfaceVariant,
                             fontSize: 13,
                           ),
                         ),
                       ],
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.logout, color: scheme.onSurface),
-                      onPressed: () async {
-                        await Supabase.instance.client.auth.signOut();
-                        if (!context.mounted) return;
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const LoginScreen(),
-                          ),
-                        );
-                      },
                     ),
                   ],
                 ),
@@ -378,7 +365,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// --- WIDGET CAROUSEL (DIBUAT STATELESS KARENA DATA DIKONTROL PARENT) ---
+// WIDGET CAROUSEL
 class _FeaturedCarousel extends StatefulWidget {
   final List<Comic> comics;
   const _FeaturedCarousel({required this.comics});
