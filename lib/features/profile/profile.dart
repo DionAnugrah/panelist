@@ -4,8 +4,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../main.dart';
 import '../auth/login_screen.dart';
 import '../../core/widgets/comic_card.dart';
-import 'histori_service.dart';
-import '../library/bookmark_service.dart';
+import '../../core/network/histori_service.dart';
+import '../../core/network/bookmark_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

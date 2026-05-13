@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:panelist/data/models/comic.dart';
 import 'package:panelist/data/models/comic_detail.dart';
 import 'package:panelist/data/repositories/comic_repository_impl.dart';
-import 'package:panelist/features/profile/histori_service.dart';
+import 'package:panelist/core/network/histori_service.dart';
 import 'package:panelist/features/reader/presentation/baca_komik.dart';
-import '../library/bookmark_service.dart';
+import '../../core/network/bookmark_service.dart';
 
 class InfoKomikScreen extends StatefulWidget {
   final Comic comic;

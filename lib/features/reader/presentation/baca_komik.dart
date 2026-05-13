@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:panelist/data/models/comic.dart';
 import 'package:panelist/data/repositories/comic_repository_impl.dart';
-import 'package:panelist/features/profile/histori_service.dart';
+import 'package:panelist/core/network/histori_service.dart';
 import 'package:panelist/features/reader/data/chapter_detail.dart';
 
 class BacaKomikScreen extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../data/models/comic.dart';
 import '../../core/widgets/comic_card.dart';
-import 'bookmark_service.dart';
+import '../../core/network/bookmark_service.dart';
 // import '../comic/infokomik.dart';
 
 class BookmarkScreen extends StatefulWidget {

@@ -95,11 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
               padding: const EdgeInsets.all(24),
               child: Column(
                 children: [
-                  Icon(
-                    Icons.menu_book_rounded,
-                    size: 100,
-                    color: scheme.primary,
-                  ),
+                  Image.asset('lib/assets/icon.png', width: 100, height: 100),
 
                   const SizedBox(height: 20),
 
