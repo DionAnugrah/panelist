@@ -37,12 +37,12 @@ class _BacaKomikScreenState extends State<BacaKomikScreen> {
 
   @override
   void initState() {
-    setNewHistory();
     super.initState();
 
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
 
+    setNewHistory();
     _fetchChapterImages();
   }
 

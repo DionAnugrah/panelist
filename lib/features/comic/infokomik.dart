@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:panelist/data/models/comic.dart';
 import 'package:panelist/data/models/comic_detail.dart';
 import 'package:panelist/data/repositories/comic_repository_impl.dart';
-import 'package:panelist/features/reader/data/chapter_detail.dart';
+import 'package:panelist/features/profile/histori_service.dart';
 import 'package:panelist/features/reader/presentation/baca_komik.dart';
 import '../library/bookmark_service.dart';
 
@@ -19,6 +19,7 @@ class _InfoKomikScreenState extends State<InfoKomikScreen> {
   ComicDetail? comicDetail;
   bool _isLoading = true;
   bool _isBookmarked = false;
+  List<String> _alreadyReadChapters = [];
 
   @override
   void initState() {
@@ -30,13 +31,16 @@ class _InfoKomikScreenState extends State<InfoKomikScreen> {
     final repo = ComicRepositoryImpl();
     try {
       final data = await repo.fetchComicDetail(widget.comic.param);
-
       final bookmarks = await BookmarkService().fetchBookmarks();
       final available = bookmarks.any((b) => b.param == widget.comic.param);
+      final history = await HistoryService().fetchHistoryBasedOnParams(
+        widget.comic.param,
+      );
       if (mounted) {
         setState(() {
           comicDetail = data;
           _isBookmarked = available;
+          _alreadyReadChapters = history;
           _isLoading = false;
         });
       }
@@ -82,7 +86,7 @@ class _InfoKomikScreenState extends State<InfoKomikScreen> {
             backgroundColor: baseColor,
             leading: _buildAppBarAction(
               icon: Icons.arrow_back,
-              onTap: () => Navigator.pop(context, true),
+              onTap: () => Navigator.pop(context),
             ),
             actions: [
               _buildAppBarAction(
@@ -171,9 +175,26 @@ class _InfoKomikScreenState extends State<InfoKomikScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   FilledButton.icon(
-                    onPressed: () => _showSnackBar('Mulai membaca...'),
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => BacaKomikScreen(
+                          chapterTitle: _alreadyReadChapters.isEmpty
+                              ? comicDetail!.chapters.last.title
+                              : _alreadyReadChapters.last,
+                          chapterParam: _alreadyReadChapters.isEmpty
+                              ? comicDetail!.chapters.last.param
+                              : "${widget.comic.param}-${_alreadyReadChapters.last}",
+                          comic: widget.comic,
+                        ),
+                      ),
+                    ),
                     icon: const Icon(Icons.play_arrow_rounded),
-                    label: const Text('Baca Sekarang'),
+                    label: Text(
+                      _alreadyReadChapters.isEmpty
+                          ? 'Baca Sekarang'
+                          : 'Lanjutkan Membaca ${_alreadyReadChapters.last.split('-').last}',
+                    ),
                     style: FilledButton.styleFrom(
                       minimumSize: const Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(
@@ -218,18 +239,15 @@ class _InfoKomikScreenState extends State<InfoKomikScreen> {
           SliverList(
             delegate: SliverChildBuilderDelegate((context, index) {
               final ch = comicDetail!.chapters[index];
-              final chPrev = index > 0
-                  ? comicDetail!.chapters[index - 1]
-                  : null;
-              final chNext = index < comicDetail!.chapters.length - 1
-                  ? comicDetail!.chapters[index + 1]
-                  : null;
               return _ChapterTile(
                 title: ch.title,
                 date: ch.releaseDate,
                 baseColor: baseColor,
                 scheme: scheme,
                 cardColor: cardColor,
+                alreadyRead: _alreadyReadChapters.contains(
+                  ch.param.split('-').last,
+                ),
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -334,6 +352,7 @@ class _ChapterTile extends StatelessWidget {
   final ColorScheme scheme;
   final Color cardColor;
   final VoidCallback onTap;
+  final bool alreadyRead;
 
   const _ChapterTile({
     required this.title,
@@ -342,6 +361,7 @@ class _ChapterTile extends StatelessWidget {
     required this.scheme,
     required this.cardColor,
     required this.onTap,
+    this.alreadyRead = false,
   });
 
   @override
@@ -360,7 +380,9 @@ class _ChapterTile extends StatelessWidget {
           height: 44,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: baseColor.withOpacity(0.1),
+            color: !alreadyRead
+                ? baseColor.withOpacity(0.1)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(

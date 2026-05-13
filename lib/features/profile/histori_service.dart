@@ -22,15 +22,22 @@ class HistoryService {
     if (userId == null) return;
 
     try {
+      final existingChapters = await fetchHistoryBasedOnParams(param);
+
+      final updatedChapters = Set<String>.from(existingChapters);
+      updatedChapters.add(lastChapter);
+
       await _supabase.from('history').upsert({
-        'param': param,
         'user_id': userId,
+        'param': param,
         'title': title,
         'thumbnail': thumbnail,
-        'last_chapter': lastChapter,
+        'latest_chapter': lastChapter,
+        'already_read': updatedChapters.toList(),
         'last_read_at': DateTime.now().toIso8601String(),
-      });
-      debugPrint('Riwayat tersimpan: $lastChapter');
+      }, onConflict: 'param');
+
+      debugPrint('Riwayat berhasil di-upsert: $lastChapter');
     } catch (e) {
       debugPrint('Error simpan riwayat: $e');
     }
@@ -44,5 +51,20 @@ class HistoryService {
         .eq('user_id', userId!)
         .order('last_read_at', ascending: false);
     return response;
+  }
+
+  Future<List<String>> fetchHistoryBasedOnParams(String params) async {
+    if (userId == null) return [];
+    final response = await _supabase
+        .from('history')
+        .select()
+        .eq('user_id', userId!)
+        .eq('param', params)
+        .maybeSingle();
+    List<String> readChapters = [];
+    if (response != null) {
+      readChapters = List<String>.from(response['already_read'] ?? []);
+    }
+    return readChapters;
   }
 }

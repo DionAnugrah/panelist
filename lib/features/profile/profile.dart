@@ -415,7 +415,7 @@ class _ComicTabContent extends StatelessWidget {
     return GridView.builder(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
+        crossAxisCount: 2,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
         childAspectRatio: 0.6,
@@ -423,13 +423,22 @@ class _ComicTabContent extends StatelessWidget {
       itemCount: comics.length,
       itemBuilder: (context, index) {
         return GestureDetector(
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => InfoKomikScreen(comic: comics[index]),
+          // onTap: () => Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (_) => InfoKomikScreen(comic: comics[index]),
+          //   ),
+          // ),
+          child: ComicCard(
+            comic: Comic(
+              title: comics[index].title,
+              description: comics[index].description,
+              latestChapter: 'Last Read: ${comics[index].latestChapter}',
+              thumbnail: comics[index].thumbnail,
+              param: comics[index].param,
+              detailUrl: comics[index].detailUrl,
             ),
           ),
-          child: ComicCard(comic: comics[index]),
         );
       },
     );
