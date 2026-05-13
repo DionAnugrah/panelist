@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:panelist/features/comic/infokomik.dart';
 import '../../data/models/comic.dart';
 import '../../core/widgets/comic_card.dart';
 import '../../core/network/bookmark_service.dart';
@@ -94,14 +95,13 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () async {
-            // 1. Pindah halaman dari sini
-            // final adaPerubahan = await Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) =>
-            //         InfoKomikScreen(comic: bookmarkedComics[index]),
-            //   ),
-            // );
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    InfoKomikScreen(comic: bookmarkedComics[index]),
+              ),
+            );
             _loadBookmarks();
           },
           child: AbsorbPointer(

@@ -35,7 +35,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.menu_book_rounded, size: 120, color: scheme.primary),
+            Image.asset('lib/assets/icon.png', width: 100, height: 100),
 
             const SizedBox(height: 30),
 
