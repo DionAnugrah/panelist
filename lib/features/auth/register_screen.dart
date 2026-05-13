@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -17,84 +16,66 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool isLoading = false;
 
   Future<void> register() async {
-
     if (emailController.text.isEmpty ||
         usernameController.text.isEmpty ||
         passwordController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Semua field wajib diisi'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Semua field wajib diisi')));
       return;
     }
 
     if (passwordController.text.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Password minimal 6 karakter'),
-        ),
+        const SnackBar(content: Text('Password minimal 6 karakter')),
       );
       return;
     }
 
     try {
-
       setState(() => isLoading = true);
 
       // REGISTER AUTH
-      final response =
-          await Supabase.instance.client.auth.signUp(
+      final response = await Supabase.instance.client.auth.signUp(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
+        data: {'display_name': usernameController.text.trim()},
       );
 
       final user = response.user;
 
       if (user != null) {
-
         // SIMPAN PROFILE
-        await Supabase.instance.client
-            .from('profiles')
-            .insert({
+        await Supabase.instance.client.from('profiles').insert({
           'id': user.id,
           'username': usernameController.text.trim(),
           'email': emailController.text.trim(),
         });
-
       }
 
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Registrasi berhasil'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Registrasi berhasil')));
 
       Navigator.pop(context);
-
     } on AuthException catch (e) {
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message)),
-      );
-
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.message)));
     } catch (e) {
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
-
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
-
       if (mounted) {
         setState(() => isLoading = false);
       }
-
     }
   }
-    @override
+
+  @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
@@ -102,14 +83,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: 450,
-            ),
+            constraints: const BoxConstraints(maxWidth: 450),
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24),
               child: Column(
                 children: [
-
                   Icon(
                     Icons.person_add_alt_1_rounded,
                     size: 100,
@@ -131,9 +109,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                   Text(
                     "Join PaneList and enjoy manga",
-                    style: TextStyle(
-                      color: scheme.onSurfaceVariant,
-                    ),
+                    style: TextStyle(color: scheme.onSurfaceVariant),
                   ),
 
                   const SizedBox(height: 40),
@@ -187,9 +163,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ? const SizedBox(
                               height: 24,
                               width: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 3,
-                              ),
+                              child: CircularProgressIndicator(strokeWidth: 3),
                             )
                           : const Text(
                               'Register',
@@ -204,9 +178,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: const Text(
-                      "Sudah punya akun? Login",
-                    ),
+                    child: const Text("Sudah punya akun? Login"),
                   ),
                 ],
               ),

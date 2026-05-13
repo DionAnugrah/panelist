@@ -129,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'PaneList',
+                          'Pane List',
                           style: TextStyle(
                             color: scheme.primary,
                             fontSize: 26,
@@ -137,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         Text(
-                          'Welcome, ${user?.email}',
+                          'Welcome, ${user?.userMetadata?['display_name'] ?? 'Guest'}',
                           style: TextStyle(
                             color: scheme.onSurfaceVariant,
                             fontSize: 13,

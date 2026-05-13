@@ -70,7 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     final scheme = Theme.of(context).colorScheme;
     final user = Supabase.instance.client.auth.currentUser;
     final email = user?.email ?? 'Pengguna';
-    final username = email.split('@').first;
+    final username = user?.userMetadata?['display_name'] ?? 'Pengguna';
     final cardColor = Theme.of(context).cardColor;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
