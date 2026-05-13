@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -10,18 +11,19 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final emailController = TextEditingController();
+  final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
   bool isLoading = false;
 
   Future<void> register() async {
 
-    // VALIDASI
     if (emailController.text.isEmpty ||
+        usernameController.text.isEmpty ||
         passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Email dan password wajib diisi'),
+          content: Text('Semua field wajib diisi'),
         ),
       );
       return;
@@ -35,22 +37,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
       return;
     }
-    // VALIDASI PASSWORD
-    if (passwordController.text.length < 6) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Password minimal 6 karakter'),
-        ),
-      );
-      return;
-    }
+
     try {
+
       setState(() => isLoading = true);
 
-      await Supabase.instance.client.auth.signUp(
+      // REGISTER AUTH
+      final response =
+          await Supabase.instance.client.auth.signUp(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
+
+      final user = response.user;
+
+      if (user != null) {
+
+        // SIMPAN PROFILE
+        await Supabase.instance.client
+            .from('profiles')
+            .insert({
+          'id': user.id,
+          'username': usernameController.text.trim(),
+          'email': emailController.text.trim(),
+        });
+
+      }
 
       if (!mounted) return;
 
@@ -61,17 +73,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
 
       Navigator.pop(context);
+
     } on AuthException catch (e) {
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.message)),
       );
+
+    } catch (e) {
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+
     } finally {
+
       if (mounted) {
         setState(() => isLoading = false);
       }
+
     }
   }
-
     @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
@@ -128,7 +150,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
 
                   const SizedBox(height: 20),
+                  // USERNAME
+                  TextField(
+                    controller: usernameController,
+                    decoration: InputDecoration(
+                      labelText: 'Username',
+                      prefixIcon: const Icon(Icons.person_outline),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                  ),
 
+                  const SizedBox(height: 20),
                   TextField(
                     controller: passwordController,
                     obscureText: true,

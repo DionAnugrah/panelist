@@ -3,7 +3,6 @@ import 'package:panelist/data/models/comic.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../main.dart';
 import '../auth/login_screen.dart';
-import '../comic/infokomik.dart';
 import '../../core/widgets/comic_card.dart';
 import 'histori_service.dart';
 import '../library/bookmark_service.dart';

@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import '../../main.dart';
 
 class WelcomeScreen extends StatefulWidget {
-  final String email;
+  final String username;
 
-  const WelcomeScreen({super.key, required this.email});
+  const WelcomeScreen({super.key, required this.username});
 
   @override
   State<WelcomeScreen> createState() => _WelcomeScreenState();
@@ -51,7 +51,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             const SizedBox(height: 12),
 
             Text(
-              widget.email,
+              widget.username,
               style: TextStyle(fontSize: 18, color: scheme.onSurfaceVariant),
             ),
 

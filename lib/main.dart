@@ -22,13 +22,16 @@ class ComicApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: themeNotifier,
+
       builder: (_, mode, __) {
         return MaterialApp(
           title: 'PaneList',
           debugShowCheckedModeBanner: false,
+
           theme: AppTheme.light(),
           darkTheme: AppTheme.dark(),
           themeMode: mode,
+
           home: const AuthGate(),
         );
       },
@@ -56,10 +59,12 @@ class _MainNavigationState extends State<MainNavigation> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+
     final cardColor = Theme.of(context).cardColor;
 
     return Scaffold(
       body: _screens[_currentIndex],
+
       bottomNavigationBar: NavigationBarTheme(
         data: NavigationBarThemeData(
           iconTheme: WidgetStateProperty.resolveWith((states) {
@@ -69,6 +74,7 @@ class _MainNavigationState extends State<MainNavigation> {
             return IconThemeData(color: scheme.onSurfaceVariant);
           }),
         ),
+
         child: NavigationBar(
           backgroundColor: cardColor,
           indicatorColor: scheme.primary,

@@ -7,7 +7,6 @@ import 'package:panelist/data/repositories/comic_repository_impl.dart';
 import '../../data/models/comic.dart';
 import '../../core/widgets/comic_card.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../auth/login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -471,10 +470,10 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
                           const SizedBox(height: 4),
                           Text(
                             comic.latestChapter,
-                            style:  TextStyle(
+                            style: TextStyle(
                               color: const Color(0xFFE53935),
                               fontSize: 13,
-                              fontWeight: FontWeight.bold
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],

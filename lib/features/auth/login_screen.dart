@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'forgot_password_screen.dart';
 import 'register_screen.dart';
 import 'welcome_screen.dart';
 
@@ -11,38 +12,45 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final emailController = TextEditingController();
+  final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
   bool isLoading = false;
 
   Future<void> login() async {
     // VALIDASI
-    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+    if (usernameController.text.isEmpty || passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Email dan password wajib diisi')),
+        const SnackBar(content: Text('Username dan password wajib diisi')),
       );
+
       return;
     }
 
-    if (passwordController.text.length < 6) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Password minimal 6 karakter')),
-      );
-      return;
-    }
     // VALIDASI PASSWORD
     if (passwordController.text.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Password minimal 6 karakter')),
       );
+
       return;
     }
+
     try {
       setState(() => isLoading = true);
 
+      // CARI EMAIL BERDASARKAN USERNAME
+      final profile = await Supabase.instance.client
+          .from('profiles')
+          .select()
+          .eq('username', usernameController.text.trim())
+          .single();
+
+      final email = profile['email'];
+
+      // LOGIN PAKAI EMAIL
       await Supabase.instance.client.auth.signInWithPassword(
-        email: emailController.text.trim(),
+        email: email,
         password: passwordController.text.trim(),
       );
 
@@ -51,13 +59,22 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => WelcomeScreen(email: emailController.text.trim()),
+          builder: (_) =>
+              WelcomeScreen(username: usernameController.text.trim()),
         ),
       );
+    } on PostgrestException {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Username tidak ditemukan')));
     } on AuthException catch (e) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(e.message)));
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
       if (mounted) {
         setState(() => isLoading = false);
@@ -104,11 +121,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const SizedBox(height: 40),
 
+                  // USERNAME
                   TextField(
-                    controller: emailController,
+                    controller: usernameController,
                     decoration: InputDecoration(
-                      labelText: 'Email',
-                      prefixIcon: const Icon(Icons.email_outlined),
+                      labelText: 'Username',
+                      prefixIcon: const Icon(Icons.person_outline),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -117,6 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const SizedBox(height: 20),
 
+                  // PASSWORD
                   TextField(
                     controller: passwordController,
                     obscureText: true,
@@ -130,12 +149,26 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
 
                   const SizedBox(height: 30),
-
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ForgotPasswordScreen(),
+                          ),
+                        );
+                      },
+                      child: const Text('Forgot Password?'),
+                    ),
+                  ),
                   SizedBox(
                     width: double.infinity,
                     height: 55,
                     child: ElevatedButton(
                       onPressed: isLoading ? null : login,
+
                       child: isLoading
                           ? const SizedBox(
                               height: 24,
